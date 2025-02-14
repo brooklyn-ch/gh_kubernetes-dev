@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-config
+  namespace: authentik
+data:
+  TZ: "Europe/Zurich"

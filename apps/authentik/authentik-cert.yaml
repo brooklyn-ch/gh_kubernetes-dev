@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: authentik-certificate
+  namespace: authentik
+spec:
+   secretName: authentik-cert-secret
+   issuerRef:
+     name: cloudflare-clusterissuer
+     kind: ClusterIssuer
+   dnsNames:
+     - auth.denniscloud.io

@@ -1,0 +1,191 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outline
+  namespace: outline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outline
+  template:
+    metadata:
+      labels:
+        app: outline
+    spec:
+      containers:
+        - name: outline
+          image: docker.getoutline.com/outlinewiki/outline:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: NODE_ENV
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: SECRET_KEY
+            - name: UTILS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: UTILS_SECRET
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: DATABASE_URL
+            - name: PGSSLMODE
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: PGSSLMODE
+            - name: FILE_STORAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: FILE_STORAGE
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_AUTH_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_AUTH_URI
+            - name: OIDC_TOKEN_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_TOKEN_URI
+            - name: OIDC_USERINFO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_USERINFO_URI
+            - name: OIDC_LOGOUT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_LOGOUT_URI
+            - name: OIDC_USERNAME_CLAIM
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_USERNAME_CLAIM
+            - name: OIDC_DISPLAY_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_DISPLAY_NAME
+            - name: OIDC_SCOPES
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: OIDC_SCOPES
+            - name: SMTP_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: SMTP_HOST
+            - name: SMTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: SMTP_PORT
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: SMTP_USERNAME
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: outline-secrets
+                  key: SMTP_PASSWORD
+            - name: SMTP_FROM_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: SMTP_FROM_EMAIL
+            - name: SMTP_REPLY_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: SMTP_REPLY_EMAIL
+            - name: SMTP_TLS_CIPHERS
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: SMTP_TLS_CIPHERS
+            - name: SMTP_SECURE
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: SMTP_SECURE
+            - name: DEFAULT_LANGUAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: DEFAULT_LANGUAGE
+            - name: RATE_LIMITER_ENABLED
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: RATE_LIMITER_ENABLED
+            - name: RATE_LIMITER_REQUESTS
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: RATE_LIMITER_REQUESTS
+            - name: RATE_LIMITER_DURATION_WINDOW
+              valueFrom:
+                configMapKeyRef:
+                  name: outline-config
+                  key: RATE_LIMITER_DURATION_WINDOW
+          volumeMounts:
+            - name: outline-data
+              mountPath: /var/lib/outline/data
+      volumes:
+        - name: outline-data
+          persistentVolumeClaim:
+            claimName: outline-storage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: outline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis-storage

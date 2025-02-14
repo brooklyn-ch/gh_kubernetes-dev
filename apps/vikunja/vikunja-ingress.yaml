@@ -1,0 +1,29 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vikunja-ingressroute
+  namespace: vikunja
+  annotations:
+    gethomepage.dev/href: "https://tasks.denniscloud.io"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Task Management
+    gethomepage.dev/group: DennisCloud Office
+    gethomepage.dev/icon: vikunja.png
+    gethomepage.dev/app: vikunja
+    gethomepage.dev/name: Vikunja
+    gethomepage.dev/widget.type: "vikunja"
+    gethomepage.dev/widget.url: "https://tasks.denniscloud.io"
+    gethomepage.dev/widget.key: tk_252b40de565ccfce8d7817ebc89554e4a87cdea0
+    gethomepage.dev/pod-selector: ""
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`tasks.denniscloud.io`)
+      kind: Rule
+      services:
+        - name: vikunja
+          port: 3456
+  tls:
+    secretName: vikunja-cert-secret

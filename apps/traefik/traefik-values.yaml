@@ -1,0 +1,38 @@
+---
+image:
+  repository: traefik
+  tag: v3.3.2
+  pullPolicy: IfNotPresent
+
+globalArguments:
+  - "--global.sendanonymoususage=false"
+  - "--global.checknewversion=false"
+
+additionalArguments:
+  - "--serversTransport.insecureSkipVerify=true"
+  - "--log.level=INFO"
+# --> Change redirect HTTP to HTTPs by default here...
+deployment:
+  enabled: true
+  kind: Deployment
+  replicas: 2
+
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true  # <-- Change this to false if you want a temporary redirect
+
+rbac:
+  enabled: true
+# --> (Optional) Securely expose the Traefik dashboard...
+#ingressRoute:
+#  dashboard:
+#    enabled: false
+#   # entryPoints:
+#      - websecure
+#    matchRule: Host(`traefik.denniscloud.io`)  # <-- Replace with your FQDN
+#    tls:
+#      secretName: traefik-web-ui-tls  # <-- Replace with your TLS secret name

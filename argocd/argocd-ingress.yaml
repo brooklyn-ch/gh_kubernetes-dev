@@ -1,0 +1,38 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argocd-ingressroute
+  namespace: argocd
+  annotations:
+    gethomepage.dev/href: "https://cd.denniscloud.io"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: CI/CD
+    gethomepage.dev/group: My Cloud Infrastructure
+    gethomepage.dev/icon: argo-cd.png
+    gethomepage.dev/app: argocd-server
+    gethomepage.dev/name: Argocd
+    #gethomepage.dev/widget.type: "vikunja"
+    #gethomepage.dev/widget.url: "https://tasks.denniscloud.io"
+    #gethomepage.dev/widget.key: tk_252b40de565ccfce8d7817ebc89554e4a87cdea0
+    #gethomepage.dev/pod-selector: ""
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`cd.denniscloud.io`)
+      priority: 10
+      services:
+        - name: argocd-server
+          port: 80
+    - kind: Rule
+      match: Host(`cd.denniscloud.io`) && Headers(`Content-Type`, `application/grpc`)
+      priority: 11
+      services:
+        - name: argocd-server
+          port: 80
+          scheme: h2ckubectl -n argocd edit deployment.apps argocd-server
+
+  tls:
+    secretName: argocd-cert-secret

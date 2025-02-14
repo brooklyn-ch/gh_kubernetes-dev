@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vikunja-certificate
+  namespace: vikunja
+spec:
+   secretName: vikunja-cert-secret
+   issuerRef:
+     name: cloudflare-clusterissuer
+     kind: ClusterIssuer
+   dnsNames:
+     - tasks.denniscloud.io

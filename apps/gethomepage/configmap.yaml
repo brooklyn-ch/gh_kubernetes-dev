@@ -1,0 +1,191 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage
+  namespace: gethomepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  kubernetes.yaml: |
+    mode: cluster
+  settings.yaml: ""
+  settings.yaml: |
+    title: DennisCloud Dashboard
+    theme: dark
+    color: slate
+    background:
+        image: https://images.unsplash.com/photo-1499678329028-101435549a4e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
+        blur: sm # sm, md, xl... see https://tailwindcss.com/docs/backdrop-blur
+        saturate: 100 # 0, 50, 100... see https://tailwindcss.com/docs/backdrop-saturate
+        brightness: 50 # 0, 50, 75... see https://tailwindcss.com/docs/backdrop-brightness
+        opacity: 50 # 0-100
+    providers:
+      longhorn:
+        url: https://longhorn.denniscloud.io
+  custom.css: ""
+  custom.js: ""
+  bookmarks.yaml: |
+    - DEV:
+      - Github:
+          - abbr: GH
+            href: https://github.com/
+      - Git Dennis:
+          - abbr: 😎
+            href: https://github.com/brooklyn-ch/brooklyn_standards
+      - Git Christian Lempa:
+          - abbr: GC
+            href: https://github.com/christianlempa
+      - Git Techno Tim:
+          - abbr: GT
+            href: https://github.com/techno-tim
+      - Docs Techno Tim:
+          - abbr: DT
+            href: https://technotim.live
+      - Dashboard Icons Repo:
+          - abbr: GI
+            href: https://github.com/walkxcode/dashboard-icons/tree/main/png
+      - GetHomepage Repo:
+          - abbr: GG
+            href: https://github.com/gethomepage/homepage/tree/main/docs/widgets/services
+      - Proxmox Helper Scripts:
+          - abbr: PH
+            href: https://community-scripts.github.io/ProxmoxVE/scripts
+    - Entertainment:
+        - YouTube:
+            - abbr: YT
+              href: https://youtube.com/
+        - Jellyfin Lars:
+            - abbr: JL
+              href: https://flix.daenzer-consulting.cloud
+        - Netflix:
+            - abbr: NF
+              href: https://www.netflix.com/
+        - Disney+:
+            - abbr: D+
+              href: https://www.disneyplus.com/
+        - Paramount+:
+            - abbr: P+
+              href: https://www.paramountplus.com
+        - TV Blue Max Swisscom:
+            - abbr: SCS
+              href: https://tv.blue.ch/bluemax
+  services.yaml: |
+    - DennisCloud Office:
+        - Drive:
+            icon: synology-drive.png
+            href: "https://drive.denniscloud.io"
+            description: A place for my Documents
+            ping: "https://192.168.100.3:10003"
+        - Photos: 
+            icon: synology-photos.png
+            href: "https://photo.denniscloud.io"
+            description: My Photo Station
+            ping: "https://192.168.100.3:5443"
+        - Outline Notes:
+                icon: outline.png
+                href: "https://notes.denniscloud.io"
+                description: Who needs Notion :)
+                #ping: "{{HOMEPAGE_VAR_OUTLINE_URL}}"    
+        - Wiki-JS:
+                icon: wikijs.png
+                href: "https://wiki.denniscloud.io"
+                description: Knowledge base DennisCloud
+                #ping: "{{HOMEPAGE_VAR_WIKIJS_URL}}" 
+        - Draw-IO:
+                icon: draw-io.png
+                href: "https://drawio.denniscloud.io"
+                description: Create beautiful Diagrams
+                #ping: "{{HOMEPAGE_VAR_DRAWIO_URL}}" 
+
+    - My Cloud Infrastructure:
+        - coming soon...:
+            href: http://localhost/
+            description: DennisCloud is the best
+
+    - Media-Service:
+      - Jellyfin:
+          icon: jellyfin.png
+          href: "https://jelly.denniscloud.io"
+          description: Jellyfin Media Streaming
+          ping: "http://192.168.100.6:8096"
+          #widget:
+          #    type: jellyfin
+          #    url: "{{HOMEPAGE_VAR_JELLYFIN_IP}}"
+          #    key: "{{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
+      - Jellyseerr:
+          icon: jellyseerr.png
+          href: "https://seer.denniscloud.io"
+          description: Media approval and seeker
+          ping: "http://192.168.100.6:5055"
+          #widget:
+          #    type: jellyseerr
+          #    url: "{{HOMEPAGE_VAR_JELLYSEERR_IP}}"
+          #    key: "{{HOMEPAGE_VAR_JELLYSEERR_API_KEY}}"
+      - SABnzbd - Usenet:
+          icon: sabnzbd.png
+          href: "http://100.91.91.69:8085/sabnzbd"
+          description: nzb Download Client
+          ping: "http://192.168.100.5:8085/sabnzbd"
+          #widget:
+          #    type: sabnzbd
+          #    url: "{{HOMEPAGE_VAR_SAB_URL}}"
+          #    key: "{{HOMEPAGE_VAR_SAB_KEY}}"
+      - Prowlarr:
+          icon: prowlarr.png
+          href: "http://192.168.100.6:969"
+          description:
+          ping: "http://192.168.100.6:969"
+      - Radarr:
+          icon: radarr.png
+          href: "http://192.168.100.6:7878"
+          description:
+          ping: "http://192.168.100.6:7878"
+          #widget:
+          #    type: radarr
+          #    url: "{{HOMEPAGE_VAR_RADARR_URL}}"
+          #    key: "{{HOMEPAGE_VAR_RADARR_API_KEY}}"
+      - Sonarr:
+          icon: sonarr.png
+          href: "http://192.168.100.6:8989"
+          description:
+          ping: "http://192.168.100.6:8989"
+          #widget:
+          #    type: sonarr
+          #    url: "{{HOMEPAGE_VAR_SONARR_URL}}"
+          #    key: "{{HOMEPAGE_VAR_SONARR_API_KEY}}" 
+
+  widgets.yaml: |
+    - kubernetes:
+        cluster:
+          show: false
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: false
+          cpu: true
+          memory: true
+          showLabel: true
+    - longhorn:
+        expanded: true
+        total: true
+        labels: true
+        nodes: false
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+        network: default
+    - search:
+        provider: duckduckgo
+        target: _blank
+    - greeting:
+        text_size: xl
+        text: DennisCloud.io
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+  docker.yaml: ""

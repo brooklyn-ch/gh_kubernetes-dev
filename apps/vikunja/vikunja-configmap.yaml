@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vikunja-config
+  namespace: vikunja
+data:
+  config.yml: |
+   service:
+     publicurl: "https://tasks.denniscloud.io"
+     enablecaldav: true
+     motd: "Welcome to the Task Management of DennisCloud"
+     enableregistration: false
+     enabletaskattachments: true
+     enabletaskcomments: false
+     enabletotp: true
+     enableemailreminders: true
+     allowiconchanges: true
+   backgrounds:
+    enabled: true
+    providers:
+      upload:
+        enabled: true
+      unsplash:
+        enabled: true
+        accesstoken: "nZojAoxryyMozx-yutSci12u1EhWvduTLve4CQr8UF0"
+        applicationid: "697069"

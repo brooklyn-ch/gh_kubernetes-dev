@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drawio-config
+  namespace: drawio
+  labels:
+    app: drawio
+data:
+  DRAWIO_ENABLE_DIAGRAM_STORAGE: "true"

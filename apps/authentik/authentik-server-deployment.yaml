@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-server
+  namespace: authentik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-server
+  template:
+    metadata:
+      labels:
+        app: authentik-server
+        app.kubernetes.io/name: authentik-server
+    spec:
+      containers:
+      - name: server
+        image: ghcr.io/goauthentik/server:2024.12.1
+        command: ["server"]
+        env:
+        - name: AUTHENTIK_REDIS__HOST
+          value: "authentik-redis"
+        - name: AUTHENTIK_POSTGRESQL__HOST
+          value: "192.168.100.47"
+        - name: AUTHENTIK_POSTGRESQL__USER
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: POSTGRES_USER
+        - name: AUTHENTIK_POSTGRESQL__NAME
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: POSTGRES_DB
+        - name: AUTHENTIK_POSTGRESQL__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: POSTGRES_PASSWORD
+        - name: AUTHENTIK_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: AUTHENTIK_SECRET_KEY
+        volumeMounts:
+        - mountPath: /media
+          name: media
+        - mountPath: /templates
+          name: custom-templates
+      volumes:
+      - name: media
+        persistentVolumeClaim:
+          claimName: media-pvc
+      - name: custom-templates
+        emptyDir: {}

@@ -1,0 +1,181 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: outline
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: outline
+  namespace: outline
+data:
+  AWS_REGION: xx-xxxx-x
+  AWS_S3_ACL: private
+  AWS_S3_FORCE_PATH_STYLE: "true"
+  AWS_S3_UPLOAD_BUCKET_NAME: wiki
+  AWS_S3_UPLOAD_BUCKET_URL: http://localhost:9000
+  AWS_S3_UPLOAD_MAX_SIZE: "26214400"
+  CDN_URL: ""
+  DATABASE_URL: postgres://outline:Outline123@localhost:5432/outline
+  DATABASE_URL_TEST: postgres://outline:Outline123@localhost:5432/outline-test
+  DEBUG: cache,presenters,events,emails,mailer,utils,multiplayer,server,services
+  DEFAULT_LANGUAGE: en_US
+  ENABLE_UPDATES: "true"
+  FORCE_HTTPS: "true"
+  GOOGLE_ALLOWED_DOMAINS: your-domain.tld
+  GOOGLE_ANALYTICS_ID: ""
+  PGSSLMODE: disable
+  PORT: "80"
+  REDIS_URL: redis://localhost:6379
+  SENTRY_DSN: ""
+  SLACK_MESSAGE_ACTIONS: "true"
+  SMTP_FROM_EMAIL: address@your-domain.tld
+  SMTP_HOST: smtp.your-mail-provider.tld
+  SMTP_PORT: "587"
+  SMTP_REPLY_EMAIL: address@your-domain.tld
+  SMTP_USERNAME: address@your-domain.tld
+  TEAM_LOGO: https://your-domain.tld/logo.png
+  URL: https://wiki.your-domain.tld
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: outline
+  namespace: outline
+type: Opaque
+data:
+  AWS_ACCESS_KEY_ID: key_here
+  AWS_SECRET_ACCESS_KEY: key_here
+  GOOGLE_CLIENT_ID: key_here
+  GOOGLE_CLIENT_SECRET: key_here
+  SECRET_KEY: key_here
+  SLACK_APP_ID: key_here
+  SLACK_KEY: key_here
+  SLACK_SECRET: key_here
+  SLACK_VERIFICATION_TOKEN: key_here
+  SMTP_PASSWORD: key_here
+  UTILS_SECRET: key_here
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: outline
+  namespace: outline
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outline
+  namespace: outline
+spec:
+  selector:
+    matchLabels:
+      app: outline
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: outline
+    spec:
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: outline
+      containers:
+      - name: outline
+        image: outlinewiki/outline:latest
+        command: ["sh", "-c", "yarn sequelize:migrate --env production-ssl-disabled && yarn start"]
+        envFrom:
+        - configMapRef:
+            name: outline
+        - secretRef:
+            name: outline
+        ports:
+        - containerPort: 80
+      - name: postgres
+        volumeMounts:
+        - name: data
+          mountPath: "/var/lib/postgresql/data"
+          subPath: postgres
+        image: postgres:latest
+        env:
+        - name: POSTGRES_USER
+          value: "outline"
+        - name: POSTGRES_PASSWORD
+          value: "Outline123"
+        - name: POSTGRES_DB
+          value: "outline"
+        ports:
+        - containerPort: 5432
+      - name: redis
+        image: redis:latest
+        ports:
+        - containerPort: 6379
+      - name: minio
+        volumeMounts:
+        - name: data
+          mountPath: "/data"
+          subPath: minio
+        image: minio/minio:latest
+        args:
+        - server
+        - /data
+        envFrom:
+        - secretRef:
+            name: outline
+        ports:
+        - containerPort: 9000
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: outline
+  namespace: outline
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    app: outline
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: outline
+  namespace: outline
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+  tls:
+  - hosts:
+    - wiki.your-domain.tld
+    secretName: outline-tls
+  rules:
+  - host: wiki.your-domain.tld
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: outline
+          servicePort: 80

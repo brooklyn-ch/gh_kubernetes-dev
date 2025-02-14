@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drawio
+  namespace: drawio
+  labels:
+    app: drawio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drawio
+  template:
+    metadata:
+      labels:
+        app: drawio
+        app.kubernetes.io/name: drawio
+    spec:
+      containers:
+      - name: drawio
+        image: jgraph/drawio:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: drawio-config
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: drawio-data

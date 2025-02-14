@@ -1,0 +1,8 @@
+helm upgrade --install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --create-namespace \
+  --set hostname=rancher.denniscloud.io \
+  --set ingress.tls.secretName=rancher-cert-secret \
+  --set ingress.tls.hosts=rancher.denniscloud.io
+
+kubectl rollout restart deploy/rancher -n cattle-system

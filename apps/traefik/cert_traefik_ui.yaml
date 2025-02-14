@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-web-ui-tls
+  namespace: traefik-proxy
+spec:
+   secretName: traefik-web-ui-tls
+   issuerRef:
+     name: cloudflare-clusterissuer
+     kind: ClusterIssuer
+   dnsNames:
+     - traefik.denniscloud.io

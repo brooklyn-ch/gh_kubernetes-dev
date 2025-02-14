@@ -1,0 +1,76 @@
+global:
+  namespace: "authentik"
+  image:
+    repository: "ghcr.io/goauthentik/server"
+    tag: "2024.12.2"
+    pullPolicy: IfNotPresent
+authentik:
+  existingSecret: "authentik-secret"
+  secret_key: "/3AS213AIX8dWgbLYu/RfPP0oUbGxDTBCFKsYLqjtYw="
+  postgresql:
+    host: '{{ .Values.authentik.secrets.postgresql_host | default "" }}'
+    name: '{{ .Values.authentik.secrets.postgresql_user_name | default "" }}'
+    user: '{{ .Values.authentik.secrets.postgresql_user | default "" }}'
+    password: '{{ .Values.authentik.secrets.postgresql_password | default "" }}'
+    port: 5432
+  email:
+    host: '{{ .Values.authentik.secrets.email_host | default "" }}'
+    port: '{{ .Values.authentik.secrets.email_port | default 587 }}'
+    username: '{{ .Values.authentik.secrets.email_username | default "" }}'
+    password: '{{ .Values.authentik.secrets.email_password | default "" }}'
+    use_tls: true
+    from: '{{ .Values.authentik.secrets.email_from | default "" }}'
+  error_reporting:
+    enabled: false
+  log_level: error
+server:
+postgresql:
+  enabled: false
+redis:
+  enabled: true
+env:
+  - name: AUTHENTIK_POSTGRESQL_HOST
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: postgresql_host
+  - name: AUTHENTIK_POSTGRESQL_USER
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: postgresql_user
+  - name: AUTHENTIK_POSTGRESQL_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: postgresql_password
+  - name: AUTHENTIK_POSTGRESQL_NAME
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: postgresql_name
+  - name: AUTHENTIK_EMAIL_HOST
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: email_host
+  - name: AUTHENTIK_EMAIL_PORT
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: email_port
+  - name: AUTHENTIK_EMAIL_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: email_username
+  - name: AUTHENTIK_EMAIL_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: email_password
+  - name: AUTHENTIK_EMAIL_FROM
+    valueFrom:
+      secretKeyRef:
+        name: authentik-secret
+        key: email_from

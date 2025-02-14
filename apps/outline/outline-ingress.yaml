@@ -1,0 +1,25 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: outline-ingressroute
+  namespace: outline
+  annotations:
+    gethomepage.dev/href: "https://notes.denniscloud.io"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Who needs Notion ;)
+    gethomepage.dev/group: DennisCloud Office
+    gethomepage.dev/icon: outline.png
+    gethomepage.dev/app: outline
+    gethomepage.dev/name: Outline Notes
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`notes.denniscloud.io`)
+      kind: Rule
+      services:
+        - name: outline
+          port: 80
+  tls:
+    secretName: outline-cert-secret

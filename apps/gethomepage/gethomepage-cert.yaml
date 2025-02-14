@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gethomepage-certificate
+  namespace: gethomepage
+spec:
+  secretName: gethomepage-certificate-secret
+  dnsNames:
+    - dashboard.denniscloud.io
+  issuerRef:
+    name: cloudflare-clusterissuer
+    kind: ClusterIssuer
