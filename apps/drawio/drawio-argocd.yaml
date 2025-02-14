@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: git@github.com:brooklyn-ch/gh_kubernetes-dev.git
     targetRevision: HEAD
-    path: apps/drawop
+    path: apps/drawio
   destination: 
     server: https://kubernetes.default.svc
     namespace: drawio
