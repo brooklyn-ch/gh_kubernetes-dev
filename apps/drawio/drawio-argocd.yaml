@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: myapp-argo-application
+  name: drawio
   namespace: argocd
 spec:
   project: default
@@ -9,10 +9,10 @@ spec:
   source:
     repoURL: git@github.com:brooklyn-ch/gh_kubernetes-dev.git
     targetRevision: HEAD
-    path: apps/
+    path: apps/drawop
   destination: 
     server: https://kubernetes.default.svc
-    namespace: myappp
+    namespace: drawio
 
   syncPolicy:
     syncOptions:
