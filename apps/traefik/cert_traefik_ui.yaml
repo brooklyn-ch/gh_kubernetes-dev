@@ -10,4 +10,4 @@ spec:
      name: cloudflare-clusterissuer
      kind: ClusterIssuer
    dnsNames:
-     - traefik.denniscloud.io
+     - traefik-kube.denniscloud.io
