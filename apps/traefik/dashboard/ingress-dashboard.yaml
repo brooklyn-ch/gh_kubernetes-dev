@@ -4,7 +4,7 @@ metadata:
   name: traefik-dashboard
   namespace: traefik-proxy
   annotations:
-    gethomepage.dev/href: "https://traefik.denniscloud.io"
+    gethomepage.dev/href: "https://traefik-kube.denniscloud.io"
     gethomepage.dev/enabled: "true"
     gethomepage.dev/description: Reverse Proxy
     gethomepage.dev/group: Services
@@ -12,7 +12,7 @@ metadata:
     gethomepage.dev/app: traefik
     gethomepage.dev/name: Traefik
     gethomepage.dev/widget.type: "traefik"
-    gethomepage.dev/widget.url: "https://traefik.denniscloud.io"
+    gethomepage.dev/widget.url: "https://traefik-kube.denniscloud.io"
     gethomepage.dev/widget.username: "dennis"
     gethomepage.dev/widget.password: "DennisTraefik2024"
     gethomepage.dev/pod-selector: ""
@@ -20,7 +20,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`traefik.denniscloud.io`)
+    - match: Host(`traefik-kube.denniscloud.io`)
       kind: Rule
       middlewares:
         - name: traefik-dashboard-basicauth
