@@ -20,7 +20,6 @@ spec:
     spec:
       serviceAccountName: homepage
       automountServiceAccountToken: true
-      dnsPolicy: ClusterFirst
       enableServiceLinks: true
       dnsPolicy: None # This is required to use dnsConfig
       dnsConfig:
